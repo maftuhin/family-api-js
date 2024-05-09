@@ -11,11 +11,15 @@ const sequelize = new Sequelize(
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
-app.get('/', async (req, res) => {
+
+app.get('/person', async (req, res) => {
     const data = await sequelize.query("SELECT * FROM people", {
         type: QueryTypes.SELECT
     })
-    res.send(data)
+    res.json({
+        records: data,
+        totalPage: data.length,
+    })
 })
 
 app.post("/person", async (req, res) => {
