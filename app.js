@@ -14,8 +14,18 @@ connection.addListener('error', (err) => {
 });
 
 app.get("/", (req, res) => {
-    connection.query("select * from people", (err, rows, fields)=>{        
-      res.send(rows)
+    res.send("Index")
+})
+
+app.get("/user", async (req, res) => {
+    const q = req.query["q"] || ""
+    const sql = "SELECT * FROM `people` WHERE `name` LIKE '%" + q + "%'"
+    connection.query(sql, (err, rows) => {
+        if (err instanceof Error) {
+            res.send(err)
+            return;
+        }
+        res.send(rows)
     })
 })
 app.listen(port, () => {
