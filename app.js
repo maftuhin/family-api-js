@@ -1,16 +1,20 @@
-const express = require('express')
-const mysql = require('mysql2');
-const port = 8000;
+import mysql from "mysql2/promise"
+import express from "express"
 const app = express()
 
-const connection = mysql.createConnection(
-    'mysql://mafb1319_main:8Belas0694s@localhost:3306/mafb1319_family'
-);
-// const connection = mysql.createConnection(
-//     'mysql://root:118806@localhost:3306/family'
-// );
-connection.addListener('error', (err) => {
-    console.log(err);
+// Create the connection to database
+// const connection = await mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     database: 'family',
+//     password: "118806"
+// });
+
+const connection = await mysql.createConnection({
+    host: 'localhost',
+    user: 'mafb1319_main',
+    database: 'mafb1319_family',
+    password: "8Belas0694s"
 });
 
 app.get("/", (req, res) => {
@@ -20,16 +24,14 @@ app.get("/", (req, res) => {
 app.get("/user", async (req, res) => {
     const q = req.query["q"] || ""
     const sql = "SELECT id, uid, name, address FROM `people` WHERE `name` LIKE '%" + q + "%'"
-    connection.query(sql, (err, rows) => {
-        if (err instanceof Error) {
-            res.send(err)
-            return;
-        }
-        res.json({
-            records: rows
-        })
+    const [rows, field] = await connection.query(sql)
+    res.json({
+        records: rows
     })
 })
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+
+app.get("/family/:uid", async (req, res) => {
+    const person = await connection.query("select * from people LIMIT 1");
+    res.send(person)
 })
+app.listen()
