@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 app.get("/user", async (req, res) => {
     const q = req.query["q"] || ""
-    const sql = "SELECT * FROM `people` WHERE `name` LIKE '%" + q + "%'"
+    const sql = "SELECT id, uid, name, address FROM `people` WHERE `name` LIKE '%" + q + "%'"
     connection.query(sql, (err, rows) => {
         if (err instanceof Error) {
             res.send(err)
