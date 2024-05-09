@@ -25,7 +25,9 @@ app.get("/user", async (req, res) => {
             res.send(err)
             return;
         }
-        res.send(rows)
+        res.json({
+            records: rows
+        })
     })
 })
 app.listen(port, () => {
