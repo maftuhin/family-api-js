@@ -18,7 +18,9 @@ app.get('/person', async (req, res) => {
     })
     res.json({
         records: data,
-        totalPage: data.length,
+        total_record: data.length,
+        total_page: 1,
+        next_page: 1
     })
 })
 
