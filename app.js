@@ -13,7 +13,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/person', async (req, res) => {
-    const data = await sequelize.query("SELECT * FROM people", {
+    const data = await sequelize.query("SELECT uid, name, address FROM people", {
         type: QueryTypes.SELECT
     })
     res.json({
