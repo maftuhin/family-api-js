@@ -13,13 +13,14 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/person', async (req, res) => {
-    const data = await sequelize.query("SELECT uid, name, address FROM people", {
+    const data = await sequelize.query("SELECT uid, name, address, gender FROM people", {
         type: QueryTypes.SELECT
     })
     res.json({
         records: data,
         total_record: data.length,
         total_page: 1,
+        page: 1,
         next_page: 1
     })
 })
@@ -36,6 +37,17 @@ app.post("/person", async (req, res) => {
     })
 
     res.json(insert)
+})
+
+app.get("/family/:id", async (req, res) => {
+    const uid = req.path.uid || ""
+
+    const person = await sequelize.query("SELECT * FROM people WHERE uid=?", {
+        replacements: [uid],
+        type: QueryTypes.SELECT
+    })
+    person[0]["children"] = []
+    res.json(person[0])
 })
 
 app.listen(port)
