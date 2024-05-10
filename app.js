@@ -4,10 +4,10 @@ const { v4: uuidv4 } = require('uuid');
 const app = express()
 const port = 8000
 
-const sequelize = new Sequelize('mysql://root:118806@localhost:3306/family')
-// const sequelize = new Sequelize(
-//     'mysql://mafb1319_main:8Belas0694s@localhost:3306/mafb1319_family'
-// )
+// const sequelize = new Sequelize('mysql://root:118806@localhost:3306/family')
+const sequelize = new Sequelize(
+    'mysql://mafb1319_main:8Belas0694s@localhost:3306/mafb1319_family'
+)
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
