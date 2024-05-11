@@ -35,15 +35,22 @@ app.post("/person", async (req, res) => {
         replacements: [uid, name, address, gender],
         type: QueryTypes.INSERT
     })
-
-    res.json(insert)
+    if (insert[1] == 0) {
+        res.status(500).json({
+            message: "error"
+        })
+        return
+    }
+    res.json({
+        message: "success"
+    })
 })
 
-app.get("/family/:uid", async (req, res) => {
+app.get("/person/:uid", async (req, res) => {
     const uid = req.params["uid"] || ""
 
     //get person
-    const person = await sequelize.query("SELECT uid, name, image, address, gender FROM people WHERE uid=?", {
+    const person = await sequelize.query("SELECT uid, name, image, address, gender, father, mother FROM people WHERE uid=?", {
         replacements: [uid],
         type: QueryTypes.SELECT
     })
@@ -53,7 +60,17 @@ app.get("/family/:uid", async (req, res) => {
         type: QueryTypes.SELECT
     })
     //get father
+    const fatherId = person[0].father || ""
+    const father = await sequelize.query("SELECT uid, name, image, address, gender FROM people WHERE spouse=?", {
+        replacements: [fatherId],
+        type: QueryTypes.SELECT
+    })
     //get mother
+    const motherId = person[0].mother || ""
+    const mother = await sequelize.query("SELECT uid, name, image, address, gender FROM people WHERE spouse=?", {
+        replacements: [motherId],
+        type: QueryTypes.SELECT
+    })
     //get children
     const children = await sequelize.query("SELECT uid, name, image, address, gender FROM people WHERE father=? OR mother=?", {
         replacements: [uid, uid],
@@ -61,7 +78,24 @@ app.get("/family/:uid", async (req, res) => {
     })
     person[0]["children"] = children
     person[0]["spouse"] = spouse[0]
+    person[0]["father"] = father[0]
+    person[0]["mother"] = mother[0]
     res.json(person[0])
+})
+
+app.post("/person/:uid", async (req, res) => {
+    const uid = req.params["uid"] || ""
+    const name = req.body.name || ""
+    const address = req.body.address || ""
+    const gender = req.body.gender || null
+    const father = req.body.father || null
+    const mother = req.body.mother || null
+
+    const update = await sequelize.query("UPDATE people SET father=? WHERE uid=?", {
+        replacements: [father, uid]
+    })
+
+    return res.json(update)
 })
 
 app.listen(port)
