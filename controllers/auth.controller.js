@@ -13,9 +13,8 @@ async function login(req, res) {
         }
     ).then((result) => {
         if (result == null) {
-            res.status(500).json({
-                message: "login failed"
-            })
+            res.status(500)
+            res.json({message: "login failed"})
             return
         }
         res.json(result)
